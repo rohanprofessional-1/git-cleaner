@@ -17,10 +17,36 @@ export function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from git-cleaner!');
+
 	});
+	printCurrentBranch();
 
 	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
+
+
+async function getGitApi() { //gets current git repo
+	const gitExtension = vscode.extensions.getExtension('vscode.git')?.exports;
+	if (!gitExtension) {
+	  vscode.window.showErrorMessage('Git extension not found');
+	  return;
+	}
+	const git = gitExtension.getAPI(1);
+	return git;
+}
+
+async function printCurrentBranch() {
+	const git = await getGitApi();
+	if (!git) return;
+  
+	const repo = git.repositories[0];
+	if (!repo) {
+	  vscode.window.showInformationMessage('No git repository found');
+	  return;
+	}
+  
+	vscode.window.showInformationMessage(`Current branch is ${repo.state.HEAD?.name}`);
+}
