@@ -1,12 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { getDiffBetweenCommits, initGitClient } from './git/gitDiff';
-
+import * as diff from './git/gitDiff';
+import * as ops from './git/gitOps';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-	await initGitClient();
+	await ops.initGitClient();
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "git-cleaner" is now active!');
@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from git-cleaner!');
 
 	});
-	console.log(getDiffBetweenCommits());
+	console.log(diff.getDiffBetweenCommits());
 	context.subscriptions.push(disposable);
 }
 
