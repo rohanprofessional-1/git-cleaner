@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import * as util from 'util';
-import * as vscode from 'vscode';
+import { getCurrentRepoPath } from './gitOps';
 const execPromise = util.promisify(exec);
 
 export async function getDiffBetweenCommits(from = 'HEAD~1', to = 'HEAD'): Promise<string> {
@@ -13,17 +13,8 @@ export async function getDiffBetweenCommits(from = 'HEAD~1', to = 'HEAD'): Promi
     throw err;
   }
 }
-export async function getCurrentRepoPath(): Promise<string | undefined> {
-    const git = await getGitApi();
-    return git.repositories[0].rootUri.fsPath;
+
+export async function stashCommits() {
+    
 }
-  
-async function getGitApi() { // gets current git repo
-    const gitExtension = vscode.extensions.getExtension('vscode.git')?.exports;
-    if (!gitExtension) {
-      vscode.window.showErrorMessage('Git extension not found');
-      return;
-    }
-    const git = gitExtension.getAPI(1);
-    return git;
-}
+
