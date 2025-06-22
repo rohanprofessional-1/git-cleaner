@@ -1,13 +1,22 @@
-import { exec } from 'child_process';
-import * as util from 'util';
 import { getCurrentRepoPath } from './gitOps';
-const execPromise = util.promisify(exec);
+import simpleGit, { SimpleGit } from 'simple-git';
+
+let git: SimpleGit | undefined;
+let repoPath: string | undefined;
+
+export async function initGitClient() {
+    repoPath = await getCurrentRepoPath();
+    git = simpleGit(repoPath);
+}
 
 export async function getDiffBetweenCommits(from = 'HEAD~1', to = 'HEAD'): Promise<string> {
+  if (!git) {
+    throw new Error('Git client not initialized');
+  }
   try {
-    const path = await getCurrentRepoPath();
-    const { stdout } = await execPromise(`git diff ${from} ${to}`, { cwd: path });
-    return stdout;
+      const diff = await git.diff([from, to]);
+      console.log(diff);
+    return diff;
   } catch (err) {
     console.error('Failed to run git diff:', err);
     throw err;
@@ -15,6 +24,6 @@ export async function getDiffBetweenCommits(from = 'HEAD~1', to = 'HEAD'): Promi
 }
 
 export async function stashCommits() {
-    
+
 }
 
